@@ -2,21 +2,15 @@ from utils.helpers import write_new_human, get_all_humans, check_email, edit_hum
 
 while True:
     print("1. Add new person!\n2. Get all persons!)\n3. Edit information about human\n")
-    flag = int(input("Choose what you want to do: "))
-    
+    try:
+        flag = int(input("Choose what you want to do: "))
+    except ValueError:
+        print('It`s not a number!')
+        continue
     if flag == 1:
         first_name = input("First Name: ")
         last_name = input("Last Name: ")
         email = input("Email: ")
-
-        while not check_email(email):
-            print("Email is not correct, please, try again:")
-            email = input("Email: ")
-
-        while not is_email_unique(email):
-            print("Еhis email already exists in the database")
-            email = input("Enter new email: ")
-
         human_dict = {'first_name': first_name, "last_name": last_name, "email": email}
         write_new_human(human_dict)
 
@@ -29,8 +23,12 @@ while True:
             print("=========================================================")
 
     elif flag == 3:
-        id = int(input("Enter id to edit: "))
-        edit_human(id)
+        try:
+            id = int(input("Enter id to edit: "))
+        except ValueError:
+            print("It`s not a number!")
+        else:
+            edit_human(id)
 
     else:
         print("Don't have this menu item")
