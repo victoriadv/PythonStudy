@@ -58,6 +58,19 @@ def write_new_human(human: dict):
     file.write(data)
     file.close()
 
+def check_email(email):
+    match = re.search(r'[\w.-]+@[\w.-]+', email)
+    if match:
+        return True
+    else:
+        return False
+
+def is_email_unique(email):
+    data = get_all_humans()
+    for el in data:
+        if el["email"] == email:
+            return False
+    return True
 
 def edit_human(id):
     data = get_all_humans()
