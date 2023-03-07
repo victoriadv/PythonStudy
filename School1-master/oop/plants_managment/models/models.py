@@ -1,85 +1,87 @@
 import json
-import re
-
-class Plant:
-
+from oop.plants_managment.framework.models import *
+class Plant(Model):
     file = "database/plants.json"
+    fields = ["name", "address"]
 
-    def __init__(self, name, address):
+    def __init__(self, name, address, id=None):
         self.name = name
         self.address = address
+        self.id = id
 
-    def generate_dict(self):
-        return {
-            "name": self.name,
-            "address": self.address
-        }
-
-    def save(self):
-        file = open(self.file, "r")
-        all_obj = json.loads(file.read())
-        file.close()
-        file = open(self.file, "w")
-        new_obj = self.generate_dict()
-        if len(all_obj) >= 1:
-            new_obj["id"] = len(all_obj) + 1
+    @classmethod
+    def get_el_by_id(cls, id):
+        data = cls.get_file_data()
+        if cls.check_id(id):
+            for el in data:
+                if el["id"] == id:
+                    return cls(el["name"], el["address"], id=el["id"])
         else:
-            new_obj["id"] = 1
-        all_obj.append(new_obj)
-        file.write(json.dumps(all_obj))
-        file.close()
+            print("No object with this id\n")
+
+
+class Salon(Model):
+    file = "database/salons.json"
+    fields = ["name", "address"]
+
+    def __init__(self, name, address, id=None):
+        self.name = name
+        self.address = address
+        self.id = id
 
     @classmethod
-    def edit_plant(cls, id):
-        plants = cls.get_all()
-        for plant in plants:
-            if plant["id"] == id:
-                plant["name"] = input("Enter new name: ")
-                plant["address"] = input("Enter new address: ")
-        file = open(cls.file, "w")
-        edit_data = json.dumps(plants)
-        file.write(edit_data)
-        file.close()
+    def get_el_by_id(cls, id):
+        data = cls.get_file_data()
+        if cls.check_id(id):
+            for el in data:
+                if el["id"] == id:
+                    return cls(el["name"], el["address"], id=el["id"])
+        else:
+            print("No object with this id\n")
 
-    @classmethod
-    def get_all(cls):
-        file = open(cls.file, "r")
-        data = json.loads(file.read())
-        file.close()
-        return data
-
-class Employee(Plant):
-
+class Employee(Model):
     file = "database/employees.json"
+    fields = ["name", "email", "type_place", "place_id"]
 
-    def __init__(self, name, email, plant_id):
+    def __init__(self, name, email, type_place, place_id, id=None):
         self.name = name
         self.email = email
-        self.plant_id = plant_id
+        self.type_place = type_place
+        self.place_id = place_id
+        self.id = id
 
-
-    def generate_dict(self):
-        match = re.search(r'[\w.-]+@[\w.-]+', self.email)
-        while not match:
-            print("Email is not correct")
-            self.email = input("Enter new email: ")
-            match = re.search(r'[\w.-]+@[\w.-]+', self.email)
-        return {
-            "name": self.name,
-            "email": self.email,
-            "plant_id": self.plant_id
-        }
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
     @classmethod
-    def edit_employee(cls, id):
-        employees = cls.get_all()
-        for employee in employees:
-            if employee["id"] == id:
-                employee["name"] = input("Enter new name: ")
-                employee["email"] = input("Enter new email: ")
-                employee["plant_id"] = input("Enter new plant_id: ")
+    def get_el_by_id(cls, id):
+        data = cls.get_file_data()
+        if cls.check_id(id):
+            for el in data:
+                if el["id"] == id:
+                    return cls(el["name"], el["email"], el["type_place"], el["place_id"], id=el["id"])
+        else:
+            print("No object with this id\n")
 
-        file = open(cls.file, "w")
-        edit_data = json.dumps(employees)
-        file.write(edit_data)
-        file.close()
+
+    @classmethod
+    def get_info_about_work(cls, id):
+        employee = cls.get_el_by_id(id)
+        try:
+            if employee["type_place"] == "salon":
+                salons = Salon.get_file_data()
+                for salon in salons:
+                    if salon["id"] == employee["place_id"]:
+                        print("Salon name: " + salon["name"] + "\nSalon address: " + salon["address"])
+            elif employee["type_place"] == "plant":
+                plants = Plant.get_file_data()
+                for plant in plants:
+                    if plant["id"] == employee["place_id"]:
+                        print("Plant name: " + plant["name"] + "\nPlant address: " + plant["address"])
+            else:
+                print("Don`t have this place of work in database")
+        except TypeError:
+            pass
+
+
+

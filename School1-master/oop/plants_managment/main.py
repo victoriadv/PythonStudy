@@ -1,7 +1,8 @@
-from models import Plant, Employee
+from models import Plant, Employee, Salon
 
 while True:
-    print("1. Add Plant\n2. Gel all plants\n3. Add Employee\n4. Get all employees\n5. Edit plant\n 6. Edit employee")
+    print("1. Add Plant\n2. Gel all plants\n3. Add Employee\n4. Get all employees\n5. Update employee"
+          "\n6. Update Plant\n7. Add Salon\n8. Get all salons\n9. Update salon\n")
     flag = int(input("Choose menu item: "))
     if flag == 1:
         name = input("Plant name: ")
@@ -9,29 +10,53 @@ while True:
         plant = Plant(name, address)
         plant.save()
     elif flag == 2:
-        plants = Plant.get_all()
-        for plant in plants:
-            print(plant["name"])
-            print(plant["address"])
-            print("=========================================================")
+        Plant.get_all()
     elif flag == 3:
         name = input("Employee name: ")
         email = input("Employee email: ")
-        plant_id = int(input("Plant id: "))
-        employee = Employee(name, email, plant_id)
+        type_place = input("Type of workplace: ")
+        place_id = int(input("Workplace id: "))
+        employee = Employee(name, email, type_place, place_id)
         employee.save()
     elif flag == 4:
-        employees = Employee.get_all()
-        for employee in employees:
-            print(employee["name"])
-            print(employee["email"])
-            print(employee["plant_id"])
-            print("=========================================================")
+        Employee.get_all()
+        print("1. Get information about the employee's place of work\n2. Skip\n")
+        new_flag = int(input("Choose menu item: "))
+        if new_flag == 1:
+            id = int(input("Input employee's id: "))
+            Employee.get_info_about_work(id)
+        elif new_flag == 2:
+            continue
+        else:
+            print("Wrong input\n")
+            continue
     elif flag == 5:
-        id = int(input("Enter id plant to edit: "))
-        Plant.edit_plant(id)
+        try:
+            id = int(input("Id which employee you want to update: "))
+            employee = Employee.get_el_by_id(id)
+            employee.update()
+        except AttributeError:
+            continue
     elif flag == 6:
-        id = int(input("Enter id employee to edit: "))
-        Employee.edit_employee(id)
+        try:
+            id = int(input("Id which plant you want to update: "))
+            plant = Plant.get_el_by_id(id)
+            plant.update()
+        except AttributeError:
+            continue
+    elif flag == 7:
+        name = input("Salon name: ")
+        address = input("Salon address: ")
+        salon = Salon(name, address)
+        salon.save()
+    elif flag == 8:
+        Salon.get_all()
+    elif flag == 9:
+        try:
+            id = int(input("Id which salon you want to update: "))
+            salon = Salon.get_el_by_id(id)
+            salon.update()
+        except AttributeError:
+            continue
     else:
-        print("Don`t have this menu item")
+        print("No this menu item\n")
