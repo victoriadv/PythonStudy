@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  app:
+    build:
+      dockerfile: ./docker/python/Dockerfile
+      context: "./"
+    ports:
+      - 9000:5000
+    volumes:
+      - ./:/app
